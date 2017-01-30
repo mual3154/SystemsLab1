@@ -25,11 +25,11 @@ team_struct team =
       Your login ID if working as a one person team
       or, ID1+ID2 where ID1 is the login ID of the first team member
       and ID2 is the login ID of the second team member */
-    "", 
+    "mual3154", 
    /* Student name 1: Replace with the full name of first team member */
-   "",
+   "Muntadher AlZayer",
    /* Login ID 1: Replace with the login ID of first team member */
-   "",
+   "mual3154",
 
    /* The following should only be changed if there are two team members */
    /* Student name 2: Full name of the second team member */
@@ -188,7 +188,9 @@ int bitAnd(int x, int y) {
  *   Rating: 1
  */
 int tmax(void) {
-  return 2;
+	int x = 7;
+	x =  ~x + 1;
+	return 	x;
 }
 // rating 2
 /* 
@@ -198,7 +200,9 @@ int tmax(void) {
  *   Rating: 2
  */
 int evenBits(void) {
-  return 2;
+	int x = 15;
+	int y = 5;
+	return y&x;
 }
 /* 
  * getByte - Extract byte n from word x
@@ -209,7 +213,9 @@ int evenBits(void) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-    return 2;
+	int y = 2^n + 2^n+1;
+	 y = y&x;
+	return y;
 }
 /* 
  * isEqual - return 1 if x == y, and 0 otherwise 
@@ -219,7 +225,7 @@ int getByte(int x, int n) {
  *   Rating: 2
  */
 int isEqual(int x, int y) {
-  return 2;
+	return !(x^y);
 }
 /* 
  * negate - return -x 
@@ -229,7 +235,7 @@ int isEqual(int x, int y) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+	return ~x + 1;
 }
 /* 
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
