@@ -179,7 +179,7 @@ NOTES:
  *   Rating: 1
  */
 int bitAnd(int x, int y) {
-  return 2;
+	return ~(~x | ~y);
 }
 /* 
  * TMax - return maximum two's complement integer 
@@ -188,9 +188,9 @@ int bitAnd(int x, int y) {
  *   Rating: 1
  */
 int tmax(void) {
-	int x = 7;
-	x =  ~x + 1;
-	return 	x;
+	int x = 1;
+	int y = ~0;
+	return ((x<<31) ^ y);
 }
 // rating 2
 /* 
@@ -246,7 +246,9 @@ int negate(int x) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-  return 2;
+	int pos = x >> n;
+	int neg = (x + (1 << n) + ~0) >> n;
+	return (pos & (~x >> 31)) | (neg & (x >> 31));
 }
 // rating 3
 /* 
@@ -258,7 +260,11 @@ int divpwr2(int x, int n) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-  return 2;
+	int sum = x+y;
+	int sign_x = x>>31;
+	int sign_y = y >> 31;
+	int sign_sum = sum >> 31;
+	return !(~(sign_x ^ sign_y) & (sign_x ^ sign_sum));
 }
 
 /*
@@ -281,7 +287,18 @@ int multFiveEights(int x) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+	int equal, shift, mask, xy_sign , x_is_min;
+	return !(equal | notEqual);
+	shift = ~((x >> 1) + (y >>1) +1)+1;
+	mask = 0x80 << 24;
+	x_is_min = !(x^mask);
+	
+	x+=shift;
+	y+=shift;
+	equal = !(x^y);
+	
+	xy_sign = !!(x&mask) & !(y&mask);
+	return equal | xy_sign | x_is_min;
 }
 /* 
  * bitMask - Generate a mask consisting of all 1's 
@@ -294,7 +311,17 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 3
  */
 int bitMask(int highbit, int lowbit) {
-  return 2;
+	int shift, mask, xy_sign , x_is_min;
+	shift = ~((x >> 1) + (y >>1) +1)+1;
+	mask = 0x80 << 24;
+	x_is_min = !(x^mask);
+	
+	x+=shift;
+	y+=shift;
+	equal = !(x^y);
+	
+	xy_sign = !!(x&mask) & !(y&mask);
+	return equal | xy_sign | x_is_min;
 }
 // rating 4
 /*
