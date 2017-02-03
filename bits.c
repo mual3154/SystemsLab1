@@ -200,9 +200,9 @@ int tmax(void) {
  *   Rating: 2
  */
 int evenBits(void) {
-	int x = 15;
-	int y = 5;
-	return y&x;
+	int mask = (0x55 << 8) + 0x55;
+	mask = (mask << 16) + mask;
+	return mask;
 }
 /* 
  * getByte - Extract byte n from word x
@@ -213,9 +213,7 @@ int evenBits(void) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-	int y = 2^n + 2^n+1;
-	 y = y&x;
-	return y;
+	return (x >> (n << 3) & 0xff);
 }
 /* 
  * isEqual - return 1 if x == y, and 0 otherwise 
@@ -277,7 +275,11 @@ int addOK(int x, int y) {
  *   Rating: 3
  */
 int multFiveEights(int x) {
-  return 2;
+	int multFive = (x << 2) +x;
+	int addNum = 7 & (multFive >> 31); //adds 7 if multFive is negative, the pre-bias. 
+	int divEight = (multFive + addNum) >> 3;
+  
+	return divEight;
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -287,18 +289,17 @@ int multFiveEights(int x) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-	int equal, shift, mask, xy_sign , x_is_min;
-	return !(equal | notEqual);
-	shift = ~((x >> 1) + (y >>1) +1)+1;
-	mask = 0x80 << 24;
-	x_is_min = !(x^mask);
+	int sign = x^y;
+	int out = ~sign;
+	int diff = y + (~x+1);
+	sign = sign & x; 
+	diff = ~diff;
+	out = out & diff;
+	out = out | sign;
+	out = out & (1<<31);
+	out = (!!out);
 	
-	x+=shift;
-	y+=shift;
-	equal = !(x^y);
-	
-	xy_sign = !!(x&mask) & !(y&mask);
-	return equal | xy_sign | x_is_min;
+	return out;
 }
 /* 
  * bitMask - Generate a mask consisting of all 1's 
@@ -311,17 +312,11 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 3
  */
 int bitMask(int highbit, int lowbit) {
-	int shift, mask, xy_sign , x_is_min;
-	shift = ~((x >> 1) + (y >>1) +1)+1;
-	mask = 0x80 << 24;
-	x_is_min = !(x^mask);
-	
-	x+=shift;
-	y+=shift;
-	equal = !(x^y);
-	
-	xy_sign = !!(x&mask) & !(y&mask);
-	return equal | xy_sign | x_is_min;
+	int mask1 = ~0 << highbit; //masks the bits above highbit
+	int mask2 = ~(~0 << lowbit); //masks the bits below lowbit
+	int mask3 = ~(1 << highbit); //masks all bit highest bit
+	mask1 = mask1 & mask3; //combine mask1 and 3 in order to get 1's above and below the limits. not in the final mask
+	return ~(mask1 | mask2);
 }
 // rating 4
 /*
@@ -333,7 +328,9 @@ int bitMask(int highbit, int lowbit) {
  *   Rating: 4
  */
 int isPower2(int x) {
-  return 2;
+	int mask = ~0; // all 1's mask
+	return (!(mask ^ (~x+1))); // XOR the number with the mask in order to find a different pattern and will come out as a different pattern. 
+
 }
 /* 
  * leastBitPos - return a mask that marks the position of the
@@ -344,7 +341,7 @@ int isPower2(int x) {
  *   Rating: 4 
  */
 int leastBitPos(int x) {
-  return 2;
+	return (x & (~x+1));
 }
 /*
  * bitParity - returns 1 if x contains an odd number of 0's
@@ -354,7 +351,12 @@ int leastBitPos(int x) {
  *   Rating: 4
  */
 int bitParity(int x) {
-  return 2;
+	x = (x>>16) ^ x;
+	x = (x>>8) ^ x;
+	x = (x>>4) ^ x;
+	x = (x>>2) ^ x;
+	x = (x>>1) ^ x;
+	return (x&1);
 }
 /* 
  * logicalNeg - implement the ! operator, using any of 
@@ -365,5 +367,6 @@ int bitParity(int x) {
  *   Rating: 4 
  */
 int logicalNeg(int x) {
-  return 2;
+	x = ((~x) & (~(~x+1))) >> 31;
+	return x&1;
 }
